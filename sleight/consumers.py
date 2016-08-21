@@ -31,6 +31,14 @@ def check_trades(message):
         return
 
     # given the order found, see if we can trade
+    print('checking trade on {}'.format(message.channel))
+    print(
+        '{} {} {}'.format(
+            initiating_order.price,
+            '<=' if initiating_order.order_type == 'ask' else '>=',
+            existing_order.price
+        )
+    )
     if initiating_order.price <= existing_order.price \
             if initiating_order.order_type == 'ask' \
             else initiating_order.price >= existing_order.price:
@@ -39,6 +47,7 @@ def check_trades(message):
             existing_order=existing_order,
             amount=initiating_order.amount,
         )
+        print('trade initialised')
         # check the amounts to determine partial or full trade
         if initiating_order.amount > existing_order.amount:
             # Trade is full trade

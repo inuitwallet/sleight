@@ -23,7 +23,6 @@ def exchange(request, base_currency, relative_currency):
         base_currency__code__iexact=base_currency,
         relative_currency__code__iexact=relative_currency
     )
-    print(pair)
     # get bid orders
     bid_orders = Order.objects.exclude(
         state='closed'
