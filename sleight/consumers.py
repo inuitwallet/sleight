@@ -94,5 +94,5 @@ def check_trades(message):
                 'order_id': initiating_order.id
             }
             print(message.channel)
-            Channel(message.channel).send(order_data)
+            Channel('{}'.format(message.channel)).send(order_data)
 
