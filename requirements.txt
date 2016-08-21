@@ -3,4 +3,5 @@ bpython
 channels
 dj-database-url
 django
+psycopg2
 whitenoise
