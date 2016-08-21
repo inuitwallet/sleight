@@ -31,12 +31,12 @@ def check_trades(message):
         return
 
     # given the order found, see if we can trade
-    print('checking trade on {}'.format(message.channel))
     print(
-        '{} {} {}'.format(
+        'checking {} {} {} on {} order'.format(
             initiating_order.price,
             '<=' if initiating_order.order_type == 'ask' else '>=',
-            existing_order.price
+            existing_order.price,
+            initiating_order.order_type
         )
     )
     if initiating_order.price <= existing_order.price \
