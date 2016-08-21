@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ pair }}</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-5 col-md-offset-1">
+            <h3>Bids</h3>
+            <table class="table table-condensed table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>
+                            ID
+                        </td>
+                        <td>
+                            Price
+                        </td>
+                        <td>
+                            Amount
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bid in bids %}
+                    <tr>
+                        <td>{{ bid.id }}</td>
+                        <td>{{ bid.price }}</td>
+                        <td>{{ bid.amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-5">
+            <h3>Asks</h3>
+            <table class="table table-condensed table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>
+                            ID
+                        </td>
+                        <td>
+                            Price
+                        </td>
+                        <td>
+                            Amount
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ask in asks %}
+                    <tr>
+                        <td>{{ ask.id }}</td>
+                        <td>{{ ask.price }}</td>
+                        <td>{{ ask.amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <h3>Trades</h3>
+            <table class="table table-condensed table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>
+                            Time
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Price
+                        </td>
+                        <td>
+                            Amount
+                        </td>
+                        <td>
+                            Initiating ID
+                        </td>
+                        <td>
+                            Existing ID
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trade in trades %}
+                    <tr>
+                        <td>
+                            {{ trade.time }}
+                        </td>
+                        <td>
+                            {{ trade.initiating_order.order_type }}
+                        </td>
+                        <td>
+                            {{ trade.existing_order.price }}
+                        </td>
+                        <td>
+                            {{ trade.amount }}
+                        </td>
+                        <td>
+                            {{ trade.initiating_order.id }}
+                        </td>
+                        <td>
+                            {{ trade.existing_order.id }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+asgi-redis
+bpython
+channels
+dj-database-url
+django
+whitenoise
