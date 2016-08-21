@@ -1,13 +1,11 @@
-import hashlib
-import hmac
-
 from channels import Channel
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
-from sleight.models import Profile, Balance, Order, CurrencyPair, Trade
+from sleight.models import Balance, Order, CurrencyPair, Trade
 from .forms import GetBalanceForm, PlaceOrderForm, GetOrdersForm, CancelOrderForm
+from .utils import ensure_valid
 
 
 def index(request):
@@ -65,38 +63,6 @@ def exchange(request, base_currency, relative_currency):
         'trades': trades,
     }
     return render(request, 'sleight/exchange.html', context)
-
-
-def ensure_valid(data):
-    """
-    make sure the api_key returns a valid profile
-    ensure the nonce is bigger then the previous nonce
-    ensure the hash of the nonce is valid given the users api_secret
-    """
-    # ensure api_key is valid
-    try:
-        profile = Profile.objects.select_related('user').get(api_key=data['api_key'])
-    except ObjectDoesNotExist:
-        return False, {'api_key': ['api_key not valid']}
-
-    # ensure nonce is bigger than previous
-    # TODO - re-enable this check
-    #if profile.nonce >= data['nonce']:
-    #    return False,
-    #        {'nonce': ['nonce needs to be greater than {}'.format(profile.nonce)]}
-    # save the nonce for the next request
-    profile.nonce = data['nonce']
-    profile.save()
-
-    # ensure the secret hash of the nonce is correct
-    calculated_hash = hmac.new(
-        str(profile.api_secret),
-        str(data['nonce']),
-        hashlib.sha256
-    ).hexdigest()
-    if calculated_hash != data['nonce_hash']:
-        return False, {'nonce_hash': ['nonce_hash is incorrect']}
-    return profile, ''
 
 
 class GetBalances(View):
