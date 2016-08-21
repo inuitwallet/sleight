@@ -224,6 +224,13 @@ class PlaceOrder(View):
             order_data = {
                 'order_id': order.id
             }
+            print(
+                'sending {} to check-trades-{}-{}'.format(
+                    order_data,
+                    pair.base_currency.code.lower(),
+                    pair.relative_currency.code.lower()
+                )
+            )
             Channel(
                 'check-trades-{}-{}'.format(
                     pair.base_currency.code.lower(),
