@@ -87,7 +87,7 @@ class Order(models.Model):
             ('complete', 'Complete'),
             ('cancelled', 'Cancelled')
         ],
-        max_length=7
+        max_length=15
     )
     time = models.DateTimeField(
         auto_now_add=True,
