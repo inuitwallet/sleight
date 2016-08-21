@@ -1,7 +1,8 @@
-from sleight.models import CurrencyPair
+#from sleight.models import CurrencyPair
 
 
 def get_all_pairs():
+    return []
     pair_list = []
     pairs = CurrencyPair.objects.select_related(
         'base_currency',
