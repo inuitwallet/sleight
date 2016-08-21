@@ -17,7 +17,7 @@ class Profile(models.Model):
     api_secret = models.UUIDField(
         default=uuid.uuid4,
     )
-    nonce = models.IntegerField()
+    nonce = models.BigIntegerField()
 
     def __str__(self):
         return self.user.email
