@@ -7,6 +7,7 @@ def get_all_pairs():
         'base_currency',
         'relative_currency'
     ).all()
+    print(pairs)
     for pair in pairs:
         this_pair = '{}/{}'.format(pair.base_currency.code, pair.relative_currency.code)
         pair_list.append((this_pair.lower(), this_pair))
