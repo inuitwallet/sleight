@@ -164,3 +164,8 @@ LOGGING = {
         },
     },
 }
+
+#CORS
+CORS_ORIGIN_WHITELIST = (
+    'editor.swagger.io'
+)
