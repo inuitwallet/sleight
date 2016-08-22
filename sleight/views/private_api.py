@@ -84,15 +84,15 @@ class PlaceOrder(View):
 
             # check the user has available funds
             if form.cleaned_data['order_type'] == 'bid':
-                try:
-                    balance = Balance.objects.get(
-                        user=profile.user,
-                        currency=pair.base_currency
-                    )
-                except ObjectDoesNotExist:
-                    balance = 0
+                balance, created = Balance.objects.get_or_create(
+                    user=profile.user,
+                    currency=pair.base_currency
+                )
+                if created:
+                    balance.amount = 0
+                    balance.save()
 
-                if balance < (form.cleaned_data['amount'] * form.cleaned_data['price']):
+                if balance.amount < (form.cleaned_data['amount'] * form.cleaned_data['price']):
                     return JsonResponse(
                         {
                             'success': False,
@@ -104,16 +104,17 @@ class PlaceOrder(View):
                             }
                         }
                     )
-            if form.cleaned_data['order_type'] == 'ask':
-                try:
-                    balance = Balance.objects.get(
-                        user=profile.user,
-                        currency=pair.relative_currency
-                    )
-                except ObjectDoesNotExist:
-                    balance = 0
 
-                if balance < form.cleaned_data['amount']:
+            else:
+                balance, created = Balance.objects.get_or_create(
+                    user=profile.user,
+                    currency=pair.relative_currency
+                )
+                if created:
+                    balance.amount = 0
+                    balance.save()
+
+                if balance.amount < form.cleaned_data['amount']:
                     return JsonResponse(
                         {
                             'success': False,
@@ -125,6 +126,10 @@ class PlaceOrder(View):
                             }
                         }
                     )
+
+            # user has balance. reduce it by the amount of the order
+            balance.amount -= form.cleaned_data['amount']
+            balance.save()
 
             order = Order.objects.create(
                 user=profile.user,

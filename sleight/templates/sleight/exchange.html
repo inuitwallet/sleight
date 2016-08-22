@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load staticfiles %}
 <head>
     <meta charset="UTF-8">
     <title>{{ pair }}</title>
@@ -26,7 +27,7 @@
                 </thead>
                 <tbody>
                     {% for bid in bids %}
-                    <tr>
+                    <tr id="order_{{ bid.id }}">
                         <td>{{ bid.id }}</td>
                         <td>{{ bid.price }}</td>
                         <td>{{ bid.amount }}</td>
@@ -53,7 +54,7 @@
                 </thead>
                 <tbody>
                     {% for ask in asks %}
-                    <tr>
+                    <tr id="order_{{ ask.id }}">
                         <td>{{ ask.id }}</td>
                         <td>{{ ask.price }}</td>
                         <td>{{ ask.amount }}</td>
@@ -91,7 +92,7 @@
                 </thead>
                 <tbody>
                     {% for trade in trades %}
-                    <tr>
+                    <tr id="trade_{{ trade.id }}">
                         <td>
                             {{ trade.time }}
                         </td>
@@ -117,4 +118,7 @@
         </div>
     </div>
 </body>
+    <script type="text/javascript" src='{% static "sleight/js/jquery-1.12.1.min.js" %}'></script>
+    <script type="text/javascript" src='{% static "sleight/js/reconnecting-websocket.min.js" %}'></script>
+    <script type="text/javascript" src='{% static "sleight/js/update_orders.js" %}'></script>
 </html>

@@ -1,5 +1,12 @@
+import json
+import logging
+
 from channels import Channel
+from channels import Group
+
 from sleight.models import Order, Trade
+
+log = logging.getLogger(__name__)
 
 
 def check_trades(message):
@@ -31,7 +38,7 @@ def check_trades(message):
         return
 
     # given the order found, see if we can trade
-    print(
+    log.info(
         'checking {} {} {} on {} order'.format(
             initiating_order.price,
             '<=' if initiating_order.order_type == 'ask' else '>=',
@@ -39,6 +46,22 @@ def check_trades(message):
             initiating_order.order_type
         )
     )
+    Group(
+        'ws-{}-{}'.format(
+            initiating_order.pair.base_currency.code.lower(),
+            initiating_order.pair.relative_currency.code.lower(),
+        )
+    ).send({
+        'text': json.dumps(
+            {
+                'order_id': initiating_order.id,
+                'amount': float(str(initiating_order.amount)),
+                'price': float(str(initiating_order.price)),
+                'order_type': initiating_order.order_type,
+                'state': initiating_order.state,
+            }
+        )
+    })
     if initiating_order.price <= existing_order.price \
             if initiating_order.order_type == 'ask' \
             else initiating_order.price >= existing_order.price:
@@ -47,7 +70,7 @@ def check_trades(message):
             existing_order=existing_order,
             amount=initiating_order.amount,
         )
-        print('trade initialised')
+        log.info('trade initialised')
         # check the amounts to determine partial or full trade
         if initiating_order.amount > existing_order.amount:
             # Trade is full trade
