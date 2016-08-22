@@ -1,71 +1,18 @@
 from channels import Channel
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http.response import JsonResponse
 from django.views.generic import View
-from sleight.models import Balance, Order, CurrencyPair, Trade
-from .forms import GetBalanceForm, PlaceOrderForm, GetOrdersForm, CancelOrderForm
-from .utils import ensure_valid
 
-
-def index(request):
-    return JsonResponse({'success': True, 'message': 'It Works!'})
-
-
-def exchange(request, base_currency, relative_currency):
-    """
-    simple view to show orders on a pair
-    """
-    # get the pair
-    pair = CurrencyPair.objects.get(
-        base_currency__code__iexact=base_currency,
-        relative_currency__code__iexact=relative_currency
-    )
-    # get bid orders
-    bid_orders = Order.objects.exclude(
-        state='closed'
-    ).exclude(
-        state='cancelled'
-    ).exclude(
-        amount=0
-    ).filter(
-        order_type='bid',
-        pair=pair,
-    ).order_by(
-        '-price',
-    )
-    # get ask orders
-    ask_orders = Order.objects.exclude(
-        state='closed'
-    ).exclude(
-        state='cancelled'
-    ).exclude(
-        amount=0
-    ).filter(
-        order_type='ask',
-        pair=pair,
-    ).order_by(
-        'price',
-    )
-    # get trades
-    trades = Trade.objects.select_related(
-        'initiating_order',
-        'existing_order'
-    ).order_by(
-        '-time'
-    ).filter(
-        initiating_order__pair=pair,
-    )
-    context = {
-        'pair': pair,
-        'bids': bid_orders,
-        'asks': ask_orders,
-        'trades': trades,
-    }
-    return render(request, 'sleight/exchange.html', context)
+from sleight.forms import GetBalanceForm, PlaceOrderForm, GetOrdersForm, CancelOrderForm, \
+    GetTradesForm
+from sleight.models import Balance, CurrencyPair, Order, Trade
+from sleight.utils import ensure_valid
 
 
 class GetBalances(View):
+    """
+    return the currency balances available to the authenticated user
+    """
 
     @staticmethod
     def get(request):
@@ -108,6 +55,9 @@ class GetBalances(View):
 
 
 class PlaceOrder(View):
+    """
+    Allow an authenticated user to place an order
+    """
 
     @staticmethod
     def get(request):
@@ -211,6 +161,9 @@ class PlaceOrder(View):
 
 
 class GetOrders(View):
+    """
+    return all the orders for the authenticated user
+    """
 
     @staticmethod
     def get(request):
@@ -236,6 +189,7 @@ class GetOrders(View):
                                 'id': order.id,
                                 'state': order.state,
                                 'amount': order.amount,
+                                'original_amount': order.original_amount,
                                 'price': order.price,
                                 'order_type': order.order_type,
                                 'pair': '{}/{}'.format(
@@ -254,6 +208,9 @@ class GetOrders(View):
 
 
 class CancelOrder(View):
+    """
+    Allow an authenticated user to cancel an order by providing the order id
+    """
 
     @staticmethod
     def get(request):
@@ -298,3 +255,49 @@ class CancelOrder(View):
                 }
             )
 
+        else:
+            return JsonResponse({'success': False, 'message': form.errors})
+
+
+class GetTrades(View):
+    """
+    Get all trades for an authenticated user
+    """
+
+    @staticmethod
+    def get(request):
+        return JsonResponse({'success': False, 'message': {'HTTP Method': ['Use POST']}})
+
+    @staticmethod
+    def post(request):
+        form = GetTradesForm(request.POST)
+
+        if form.is_valid():
+            profile, message = ensure_valid(form.cleaned_data)
+            if not profile:
+                return JsonResponse({'success': False, 'message': message})
+
+            trades = Trade.objects.filter(
+                initiating_order__user=profile.user
+            )
+            return JsonResponse(
+                {
+                    'success': True,
+                    'message': {
+                        'trades': [
+                            {
+                                'id': trade.id,
+                                'initiating_order': trade.initiating_order,
+                                'existing_order': trade.existing_order,
+                                'time': trade.time,
+                                'amount': trade.amount,
+                                'partial': trade.partial
+                            }
+                            for trade in trades
+                            ]
+                    }
+                }
+            )
+
+        else:
+            return JsonResponse({'success': False, 'message': form.errors})

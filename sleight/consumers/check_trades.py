@@ -95,4 +95,3 @@ def check_trades(message):
             }
             print(message.channel)
             Channel('{}'.format(message.channel)).send(order_data)
-

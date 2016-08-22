@@ -67,3 +67,7 @@ class GetOrdersForm(BaseForm):
 
 class CancelOrderForm(BaseForm):
     order_id = forms.IntegerField()
+
+
+class GetTradesForm(BaseForm):
+    pass

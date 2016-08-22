@@ -115,6 +115,9 @@ class Trade(models.Model):
     )
     partial = models.BooleanField()
 
+    def __str__(self):
+        return '{}'.format(self.time)
+
 
 class Balance(models.Model):
     user = models.ForeignKey(

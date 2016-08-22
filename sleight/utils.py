@@ -2,11 +2,15 @@ import hashlib
 import hmac
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import connection
+
 from sleight.models import CurrencyPair, Profile
 
 
 def get_all_pairs():
     pair_list = []
+    if 'sleight_currencypair' not in connection.introspection.table_names():
+        return pair_list
     pairs = CurrencyPair.objects.select_related(
         'base_currency',
         'relative_currency'

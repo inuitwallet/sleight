@@ -1,5 +1,5 @@
 from channels import route
-from .consumers import check_trades
+from consumers import check_trades
 
 channel_routing = [
     route('btc-usnbt', check_trades),

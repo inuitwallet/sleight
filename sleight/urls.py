@@ -16,14 +16,33 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
-from .views import *
+
+from sleight.views.exchange import index, exchange
+from sleight.views.private_api import GetBalances, PlaceOrder, GetOrders, CancelOrder
+from sleight.views.public_api import GetOrderBook, GetTicker
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    # admin site
+    url(r'^admin', admin.site.urls),
+
+    # front end exchange
+    url(r'^$', index),
+    url(r'^exchange/(?P<base_currency>\w+)/(?P<relative_currency>\w+)$', exchange),
+
+    # private api
     url(r'^get_balances$', csrf_exempt(GetBalances.as_view())),
     url(r'^place_order$', csrf_exempt(PlaceOrder.as_view())),
     url(r'^get_orders$', csrf_exempt(GetOrders.as_view())),
     url(r'^cancel_order$', csrf_exempt(CancelOrder.as_view())),
-    url(r'^exchange/(?P<base_currency>\w+)/(?P<relative_currency>\w+)$', exchange),
-    url(r'^$', index),
+
+    # public api
+    url(
+        r'^get_order_book/(?P<base_currency>\w+)/(?P<relative_currency>\w+)$',
+        csrf_exempt(GetOrderBook.as_view())
+    ),
+    url(
+        r'^get_ticker/(?P<base_currency>\w+)/(?P<relative_currency>\w+)$',
+        csrf_exempt(GetTicker.as_view())
+    ),
+
 ]
