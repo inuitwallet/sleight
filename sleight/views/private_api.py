@@ -1,4 +1,5 @@
 from channels import Channel
+from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import JsonResponse
 from django.views.generic import View
@@ -83,49 +84,36 @@ class PlaceOrder(View):
             )
 
             # check the user has available funds
-            if form.cleaned_data['order_type'] == 'bid':
-                balance, created = Balance.objects.get_or_create(
-                    user=profile.user,
-                    currency=pair.base_currency
+            balance, created = Balance.objects.get_or_create(
+                user=profile.user,
+                currency=(
+                    pair.relative_currency
+                    if form.cleaned_data['order_type'] == 'ask' else
+                    pair.base_currency
                 )
-                if created:
-                    balance.amount = 0
-                    balance.save()
+            )
+            if created:
+                balance.amount = Decimal(0)
+                balance.save()
 
-                if balance.amount < (form.cleaned_data['amount'] * form.cleaned_data['price']):
-                    return JsonResponse(
-                        {
-                            'success': False,
-                            'message': {
-                                'insufficient balance': '{} {}'.format(
-                                    balance,
-                                    pair.base_currency.code.upper()
-                                )
-                            }
+            order_amount = (
+                form.cleaned_data['amount']
+                if form.cleaned_data['order_type'] == 'ask' else
+                form.cleaned_data['amount'] * form.cleaned_data['price']
+            )
+
+            if balance.amount == Decimal(0) or balance.amount < order_amount:
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': {
+                            'insufficient balance': '{} {}'.format(
+                                float(balance.amount),
+                                pair.base_currency.code.upper()
+                            )
                         }
-                    )
-
-            else:
-                balance, created = Balance.objects.get_or_create(
-                    user=profile.user,
-                    currency=pair.relative_currency
+                    }
                 )
-                if created:
-                    balance.amount = 0
-                    balance.save()
-
-                if balance.amount < form.cleaned_data['amount']:
-                    return JsonResponse(
-                        {
-                            'success': False,
-                            'message': {
-                                'insufficient balance': '{} {}'.format(
-                                    balance,
-                                    pair.relative_currency.code.upper()
-                                )
-                            }
-                        }
-                    )
 
             # user has balance. reduce it by the amount of the order
             balance.amount -= form.cleaned_data['amount']
