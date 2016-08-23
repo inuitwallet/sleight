@@ -1,6 +1,7 @@
 import json
 import logging
 
+import datetime
 from channels import Channel
 from channels import Group
 
@@ -16,7 +17,28 @@ def check_trades(message):
     message contains the order that was placed
     """
     initiating_order = Order.objects.get(id=message.content['order_id'])
-
+    log.info(
+        'received {} order {}. Notifying group'.format(
+            initiating_order.order_type,
+            initiating_order.id
+        )
+    )
+    base = initiating_order.pair.base_currency.code.lower()
+    relative = initiating_order.pair.relative_currency.code.lower()
+    Group('ws-{}-{}'.format(base, relative)).send(
+        {
+            'text': json.dumps(
+                {
+                    'message_type': 'order',
+                    'order_id': initiating_order.id,
+                    'amount': str(initiating_order.amount),
+                    'price': str(initiating_order.price),
+                    'order_type': initiating_order.order_type,
+                    'state': initiating_order.state,
+                }
+            )
+        }
+    )
     # fetch the order of interest
     # get highest bid or lowest ask
     existing_order = Order.objects.exclude(
@@ -35,6 +57,11 @@ def check_trades(message):
     try:
         existing_order = existing_order[0]
     except IndexError:
+        log.error(
+            'No {} orders on book to match'.format(
+                'bid' if initiating_order.order_type == 'ask' else 'ask'
+            )
+        )
         return
 
     # given the order found, see if we can trade
@@ -46,22 +73,6 @@ def check_trades(message):
             initiating_order.order_type
         )
     )
-    Group(
-        'ws-{}-{}'.format(
-            initiating_order.pair.base_currency.code.lower(),
-            initiating_order.pair.relative_currency.code.lower(),
-        )
-    ).send({
-        'text': json.dumps(
-            {
-                'order_id': initiating_order.id,
-                'amount': float(str(initiating_order.amount)),
-                'price': float(str(initiating_order.price)),
-                'order_type': initiating_order.order_type,
-                'state': initiating_order.state,
-            }
-        )
-    })
     if initiating_order.price <= existing_order.price \
             if initiating_order.order_type == 'ask' \
             else initiating_order.price >= existing_order.price:
@@ -111,6 +122,54 @@ def check_trades(message):
             initiating_order.state = 'complete'
             initiating_order.save()
 
+        # update the orders to the group
+        Group('ws-{}-{}'.format(base, relative)).send(
+            {
+                'text': json.dumps(
+                    {
+                        'message_type': 'order',
+                        'order_id': initiating_order.id,
+                        'state': initiating_order.state,
+                        'amount': str(initiating_order.amount)
+                    }
+                )
+            }
+        )
+        Group('ws-{}-{}'.format(base, relative)).send(
+            {
+                'text': json.dumps(
+                    {
+                        'message_type': 'order',
+                        'order_id': existing_order.id,
+                        'state': existing_order.state,
+                        'amount': str(existing_order.amount)
+                    }
+                )
+            }
+        )
+
+        # send the trade too
+        Group('ws-{}-{}'.format(base, relative)).send(
+            {
+                'text': json.dumps(
+                    {
+                        'message_type': 'trade',
+                        'trade_time': str(
+                            datetime.datetime.strftime(
+                                trade.time,
+                                '%Y-%m-%d %H:%M:%S %Z'
+                            )
+                        ),
+                        'trade_type': initiating_order.order_type,
+                        'amount': str(trade.amount),
+                        'price': str(existing_order.price),
+                        'initiating_id': str(initiating_order.id),
+                        'existing_id': str(existing_order.id)
+                    }
+                )
+            }
+        )
+
         # if there are funds left in the initiating order, go again
         if initiating_order.amount > 0:
             order_data = {
@@ -118,3 +177,4 @@ def check_trades(message):
             }
             print(message.channel)
             Channel('{}'.format(message.channel)).send(order_data)
+        log.info('trade check finished')
