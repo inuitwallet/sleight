@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
             <h3>Bids</h3>
-            <table class="table table-condensed table-hover table-bordered table-striped">
+            <table id="bid_orders" class="table table-condensed table-hover table-bordered table-striped">
                 <thead>
                     <tr>
                         <td>
@@ -28,9 +28,9 @@
                 <tbody>
                     {% for bid in bids %}
                     <tr id="order_{{ bid.id }}">
-                        <td>{{ bid.id }}</td>
-                        <td>{{ bid.price }}</td>
-                        <td>{{ bid.amount }}</td>
+                        <td class="id">{{ bid.id }}</td>
+                        <td id="order_{{ bid.id }}_price" class="price">{{ bid.price }}</td>
+                        <td id="order_{{ bid.id }}_amount" class="amount">{{ bid.amount }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-5">
             <h3>Asks</h3>
-            <table class="table table-condensed table-hover table-bordered table-striped">
+            <table id="ask_orders" class="table table-condensed table-hover table-bordered table-striped">
                 <thead>
                     <tr>
                         <td>
@@ -55,9 +55,9 @@
                 <tbody>
                     {% for ask in asks %}
                     <tr id="order_{{ ask.id }}">
-                        <td>{{ ask.id }}</td>
-                        <td>{{ ask.price }}</td>
-                        <td>{{ ask.amount }}</td>
+                        <td class="id">{{ ask.id }}</td>
+                        <td id="order_{{ ask.id }}_price" class="price">{{ ask.price }}</td>
+                        <td id="order_{{ ask.id }}_amount" class="amount">{{ ask.amount }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -67,7 +67,7 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <h3>Trades</h3>
-            <table class="table table-condensed table-hover table-bordered table-striped">
+            <table id="trades" class="table table-condensed table-hover table-bordered table-striped">
                 <thead>
                     <tr>
                         <td>
@@ -94,7 +94,7 @@
                     {% for trade in trades %}
                     <tr id="trade_{{ trade.id }}">
                         <td>
-                            {{ trade.time }}
+                            {{ trade.time|date:'Y-m-d H:i:s e' }}
                         </td>
                         <td>
                             {{ trade.initiating_order.order_type }}
