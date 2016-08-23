@@ -109,7 +109,9 @@ class PlaceOrder(View):
                         'message': {
                             'insufficient balance': '{} {}'.format(
                                 float(balance.amount),
-                                pair.base_currency.code.upper()
+                                pair.relative_currency
+                                if form.cleaned_data['order_type'] == 'ask' else
+                                pair.base_currency
                             )
                         }
                     }
