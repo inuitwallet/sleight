@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
 {% load staticfiles %}
-<head>
-    <meta charset="UTF-8">
-    <title>{{ pair }}</title>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-</head>
-<body>
+
+{% block title %}
+    {{ pair }}
+{% endblock%}
+
+{% block content %}
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
             <h3>Bids</h3>
-            <table id="bid_orders" class="table table-condensed table-hover table-bordered table-striped">
+            <div id="bids-table">
+                <table id="bid_orders" class="table table-condensed table-hover table-bordered table-striped">
                 <thead>
                     <tr>
                         <td>
@@ -35,10 +35,12 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
         </div>
         <div class="col-md-5">
             <h3>Asks</h3>
-            <table id="ask_orders" class="table table-condensed table-hover table-bordered table-striped">
+            <div id="asks-table">
+                <table id="ask_orders" class="table table-condensed table-hover table-bordered table-striped">
                 <thead>
                     <tr>
                         <td>
@@ -62,12 +64,14 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <h3>Trades</h3>
-            <table id="trades" class="table table-condensed table-hover table-bordered table-striped">
+            <div id="trades-table">
+                <table id="trades" class="table table-condensed table-hover table-bordered table-striped">
                 <thead>
                     <tr>
                         <td>
@@ -115,10 +119,13 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
-</body>
+{% endblock %}
+
+{% block afterbody %}
     <script type="text/javascript" src='{% static "sleight/js/jquery-1.12.1.min.js" %}'></script>
     <script type="text/javascript" src='{% static "sleight/js/reconnecting-websocket.min.js" %}'></script>
     <script type="text/javascript" src='{% static "sleight/js/update_orders.js" %}'></script>
-</html>
+{% endblock %}

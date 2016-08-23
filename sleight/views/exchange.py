@@ -52,7 +52,7 @@ def exchange(request, base_currency, relative_currency):
         '-time'
     ).filter(
         initiating_order__pair=pair,
-    )
+    )[:150]
     context = {
         'pair': pair,
         'bids': bid_orders,
