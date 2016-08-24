@@ -20,17 +20,20 @@ $(function() {
                 } else {
                     // otherwise we just update the amount on order
                     var amount_field = $('#order_' + data.order_id + '_amount');
-                    amount_field.text(data.amount);
+                    amount_field.text(parseFloat(data.amount).toFixed(4));
                     amount_field.fadeOut(100).fadeIn(100);
+                    var total_field = $('#order_' + data.order_id + '_total');
+                    total_field.text((parseFloat(data.amount).toFixed(4) * parseFloat(data.price).toFixed(4)).toFixed(4));
+                    total_field.fadeOut(100).fadeIn(100);
                 }
             } else {
                 // order doesn't exist
                 var table_rows = $('#' + data.order_type + '_orders tbody tr');
                 var new_row = '<tr id="order_' + data.order_id + '">' +
                     '<td class="id">' + data.order_id + '</td>' +
-                    '<td id="order_' + data.order_id + '_price" class="price">' + data.price + '</td>' +
-                    '<td id="order_' + data.order_id + '_amount">' + data.amount + '</td>' +
-                    '<td id="order_' + data.order_id + '_total">' + data.amount * data.price + '</td>' +
+                    '<td id="order_' + data.order_id + '_price" class="price">' + parseFloat(data.price).toFixed(4) + '</td>' +
+                    '<td id="order_' + data.order_id + '_amount" class="amount">' + parseFloat(data.amount).toFixed(4) + '</td>' +
+                    '<td id="order_' + data.order_id + '_total" class="total">' + (parseFloat(data.amount).toFixed(4) * parseFloat(data.price).toFixed(4)).toFixed(4); + '</td>' +
                     '</tr>';
                 // sometimes the order table is empty so we should insert the new order at the top
                 if (table_rows.length == 0) {
@@ -44,10 +47,10 @@ $(function() {
 
                     $(table_rows).each(function () {
                         var id = $(this).find('td.id').text();
-                        var price = $(this).find('td.price').text();
+                        var price = parseFloat($(this).find('td.price').text()).toFixed(4);
                         i++;
                         row = i - 1;
-                        if ((data.order_type == 'ask' && price > data.price) || (data.order_type == 'bid' && price < data.price)) {
+                        if ((data.order_type == 'ask' && price > parseFloat(data.price).toFixed(4)) || (data.order_type == 'bid' && price < parseFloat(data.price).toFixed(4))) {
                             table_rows.eq(row).before(new_row);
                             $('#order_' + data.order_id).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
                             inserted = true;
@@ -64,14 +67,13 @@ $(function() {
 
         if (data.message_type == 'trade') {
             //we have a trade
-            console.log(data);
             //build the new row and put it at the top of the trade table
             var new_trade_row = '<tr id="trade_' + data.trade_id + '">' +
                               '<td>' + data.trade_time + '</td>' +
                               '<td>' + data.trade_type + '</td>' +
-                              '<td>' + data.price+ '</td>' +
-                              '<td>' + data.amount + '</td>' +
-                              '<td>' + data.amount * data.price + '</td>' +
+                              '<td>' + parseFloat(data.price).toFixed(4) + '</td>' +
+                              '<td>' + parseFloat(data.amount).toFixed(4) + '</td>' +
+                              '<td>' + (parseFloat(data.amount).toFixed(4) * parseFloat(data.price).toFixed(4)).toFixed(4) + '</td>' +
                               '<td>' + data.initiating_id + '</td>' +
                               '<td>' + data.existing_id + '</td>' +
                           '</tr>';

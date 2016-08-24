@@ -87,6 +87,9 @@ venv/
 ENV/
 ve/
 
+# static files
+staticfiles/
+
 # Spyder project settings
 .spyderproject
 

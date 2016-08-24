@@ -5,3 +5,4 @@ dj-database-url
 django
 django-cors-middleware
 psycopg2
+whitenoise

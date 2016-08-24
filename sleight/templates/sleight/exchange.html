@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% load staticfiles %}
-
 {% load sleight_extras %}
 
 {% block title %}
@@ -156,6 +154,7 @@
 {% endblock %}
 
 {% block afterbody %}
+    {% load staticfiles %}
     <script type="text/javascript" src='{% static "sleight/js/reconnecting-websocket.min.js" %}'></script>
     <script type="text/javascript" src='{% static "sleight/js/web_sockets.js" %}'></script>
 {% endblock %}

@@ -168,14 +168,16 @@ def check_trades(message):
             'message_type': 'order',
             'order_id': initiating_order.id,
             'state': initiating_order.state,
-            'amount': str(initiating_order.amount)
+            'amount': str(initiating_order.amount),
+            'price': str(existing_order.price)
         })
 
         send_to_ws_group(group_name, {
             'message_type': 'order',
             'order_id': existing_order.id,
             'state': existing_order.state,
-            'amount': str(existing_order.amount)
+            'amount': str(existing_order.amount),
+            'price': str(existing_order.price)
         })
 
         # send the trade too

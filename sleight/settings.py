@@ -39,15 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sleight.apps.SleightConfig',
     'channels',
-    'corsheaders',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -131,8 +132,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-APPEND_SLASH = False
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+APPEND_SLASH = False
 
 CHANNEL_LAYERS = {
     "default": {
@@ -168,4 +170,6 @@ LOGGING = {
 }
 
 # CORS
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_REPLACE_HTTPS_REFERER = True
