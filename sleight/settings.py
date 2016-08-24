@@ -168,10 +168,4 @@ LOGGING = {
 }
 
 # CORS
-CORS_ORIGIN_WHITELIST = (
-    'editor.swagger.io'
-)
-
-CORS_ALLOW_METHODS = (
-     'POST',
-)
+CORS_ORIGIN_ALLOW_ALL = True
