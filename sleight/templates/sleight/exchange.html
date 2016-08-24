@@ -2,11 +2,28 @@
 
 {% load staticfiles %}
 
+{% load sleight_extras %}
+
 {% block title %}
     {{ pair }}
 {% endblock%}
 
 {% block content %}
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <h3>Balances</h3>
+            {% if base_balance %}
+                <div class="col-md-6">
+                    <h4>Base Balance: <b><strong><span id="base_balance">{{ base_balance.amount|trim_zeros }}</span></strong> {{ base_balance.currency }}</b></h4>
+                </div>
+            {% endif %}
+            {% if relative_balance %}
+                <div class="col-md-6">
+                    <h4>Relative Balance: <b><strong><span id="relative_balance">{{ relative_balance.amount|trim_zeros }}</span></strong> {{ relative_balance.currency }}</b></h4>
+                </div>
+            {% endif %}
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
             <h3>Bids</h3>
@@ -18,10 +35,13 @@
                             ID
                         </td>
                         <td>
-                            Price
+                            Price in {{ pair.base_currency }}
                         </td>
                         <td>
-                            Amount
+                            Amount in {{ pair.relative_currency }}
+                        </td>
+                        <td>
+                            Total in {{ pair.base_currency }}
                         </td>
                     </tr>
                 </thead>
@@ -29,8 +49,9 @@
                     {% for bid in bids %}
                     <tr id="order_{{ bid.id }}">
                         <td class="id">{{ bid.id }}</td>
-                        <td id="order_{{ bid.id }}_price" class="price">{{ bid.price }}</td>
-                        <td id="order_{{ bid.id }}_amount" class="amount">{{ bid.amount }}</td>
+                        <td id="order_{{ bid.id }}_price" class="price">{{ bid.price|trim_zeros }}</td>
+                        <td id="order_{{ bid.id }}_amount" class="amount">{{ bid.amount|trim_zeros }}</td>
+                        <td id="order_{{ bid.id }}_total" class="total">{{ bid.amount|multiply:bid.price|trim_zeros }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -47,10 +68,13 @@
                             ID
                         </td>
                         <td>
-                            Price
+                            Price in {{ pair.base_currency }}
                         </td>
                         <td>
-                            Amount
+                            Amount in {{ pair.relative_currency }}
+                        </td>
+                        <td>
+                            Total in {{ pair.base_currency }}
                         </td>
                     </tr>
                 </thead>
@@ -58,8 +82,9 @@
                     {% for ask in asks %}
                     <tr id="order_{{ ask.id }}">
                         <td class="id">{{ ask.id }}</td>
-                        <td id="order_{{ ask.id }}_price" class="price">{{ ask.price }}</td>
-                        <td id="order_{{ ask.id }}_amount" class="amount">{{ ask.amount }}</td>
+                        <td id="order_{{ ask.id }}_price" class="price">{{ ask.price|trim_zeros }}</td>
+                        <td id="order_{{ ask.id }}_amount" class="amount">{{ ask.amount|trim_zeros }}</td>
+                        <td id="order_{{ ask.id }}_total" class="total">{{ ask.amount|multiply:ask.price|trim_zeros }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -81,10 +106,13 @@
                             Type
                         </td>
                         <td>
-                            Price
+                            Price in {{ pair.base_currency }}
                         </td>
                         <td>
-                            Amount
+                            Amount in {{ pair.relative_currency }}
+                        </td>
+                        <td>
+                            Total in {{ pair.base_currency }}
                         </td>
                         <td>
                             Initiating ID
@@ -104,10 +132,13 @@
                             {{ trade.initiating_order.order_type }}
                         </td>
                         <td>
-                            {{ trade.existing_order.price }}
+                            {{ trade.existing_order.price|trim_zeros }}
                         </td>
                         <td>
-                            {{ trade.amount }}
+                            {{ trade.amount|trim_zeros }}
+                        </td>
+                        <td>
+                            {{ trade.amount|multiply:trade.existing_order.price|trim_zeros }}
                         </td>
                         <td>
                             {{ trade.initiating_order.id }}

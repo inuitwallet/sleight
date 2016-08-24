@@ -52,11 +52,16 @@ def update_balances(initiating_order, existing_order):
         if initiating_order.order_type == 'ask' else
         initiating_order.amount * existing_order.price
     )
+    initiating_balance.save()
+
     existing_balance.amount += (
         initiating_order.amount
         if existing_order.order_type == 'ask' else
         initiating_order.amount
     )
+    existing_balance.save()
+
+
 
 
 def check_trades(message):

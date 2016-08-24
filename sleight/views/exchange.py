@@ -1,7 +1,7 @@
 from django.http.response import JsonResponse
 from django.shortcuts import render, get_object_or_404
 
-from sleight.models import CurrencyPair, Order, Trade
+from sleight.models import CurrencyPair, Order, Trade, Balance
 
 
 def index(request):
@@ -53,10 +53,26 @@ def exchange(request, base_currency, relative_currency):
     ).filter(
         initiating_order__pair=pair,
     )[:150]
+    try:
+        base_balance = Balance.objects.get(
+            user=request.user,
+            currency=pair.base_currency
+        )
+    except Balance.DoesNotExist:
+        base_balance = None
+    try:
+        relative_balance = Balance.objects.get(
+            user=request.user,
+            currency=pair.relative_currency
+        )
+    except Balance.DoesNotExist:
+        base_balance = None
     context = {
         'pair': pair,
         'bids': bid_orders,
         'asks': ask_orders,
         'trades': trades,
+        'base_balance': base_balance,
+        'relative_balance': relative_balance,
     }
     return render(request, 'sleight/exchange.html', context)
