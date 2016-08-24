@@ -37,6 +37,8 @@ class GetBalances(View):
                 )
             )
 
+            # get the open and partial orders
+
             return JsonResponse(
                 {
                     'success': True,

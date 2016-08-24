@@ -129,6 +129,7 @@ class Balance(models.Model):
     amount = models.DecimalField(
         max_digits=20,
         decimal_places=10,
+        default=0
     )
 
     def __str__(self):
