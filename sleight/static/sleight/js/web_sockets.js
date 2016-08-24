@@ -30,6 +30,7 @@ $(function() {
                     '<td class="id">' + data.order_id + '</td>' +
                     '<td id="order_' + data.order_id + '_price" class="price">' + data.price + '</td>' +
                     '<td id="order_' + data.order_id + '_amount">' + data.amount + '</td>' +
+                    '<td id="order_' + data.order_id + '_total">' + data.amount * data.price + '</td>' +
                     '</tr>';
                 // sometimes the order table is empty so we should insert the new order at the top
                 if (table_rows.length == 0) {
@@ -70,6 +71,7 @@ $(function() {
                               '<td>' + data.trade_type + '</td>' +
                               '<td>' + data.price+ '</td>' +
                               '<td>' + data.amount + '</td>' +
+                              '<td>' + data.amount * data.price + '</td>' +
                               '<td>' + data.initiating_id + '</td>' +
                               '<td>' + data.existing_id + '</td>' +
                           '</tr>';

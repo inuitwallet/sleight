@@ -37,19 +37,19 @@ class GetBalances(View):
                 )
             )
 
-            # get the open and partial orders
-
             return JsonResponse(
                 {
                     'success': True,
-                    'message': [
-                        {
-                            'currency_code': balance.currency.code,
-                            'currency_name': balance.currency.name,
-                            'amount': balance.amount
-                        }
-                        for balance in balances
-                    ]
+                    'message': {
+                        'balances': [
+                            {
+                                'currency_code': balance.currency.code.upper(),
+                                'currency_name': balance.currency.name,
+                                'amount': balance.amount
+                            }
+                            for balance in balances
+                        ]
+                    }
                 }
             )
 
