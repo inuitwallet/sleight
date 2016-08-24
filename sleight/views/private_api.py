@@ -45,7 +45,7 @@ class GetBalances(View):
                             {
                                 'currency_code': balance.currency.code.upper(),
                                 'currency_name': balance.currency.name,
-                                'amount': balance.amount
+                                'amount': float(str(balance.amount))
                             }
                             for balance in balances
                         ]
@@ -185,9 +185,9 @@ class GetOrders(View):
                             {
                                 'id': order.id,
                                 'state': order.state,
-                                'amount': order.amount,
-                                'original_amount': order.original_amount,
-                                'price': order.price,
+                                'amount': float(str(order.amount)),
+                                'original_amount': float(str(order.original_amount)),
+                                'price': float(str(order.price)),
                                 'order_type': order.order_type,
                                 'pair': '{}/{}'.format(
                                     order.pair.base_currency.code.lower(),
@@ -287,7 +287,7 @@ class GetTrades(View):
                                 'initiating_order': trade.initiating_order,
                                 'existing_order': trade.existing_order,
                                 'time': trade.time,
-                                'amount': trade.amount,
+                                'amount': float(str(trade.amount)),
                                 'partial': trade.partial
                             }
                             for trade in trades
