@@ -3,5 +3,5 @@ bpython
 channels
 dj-database-url
 django
-django-cors-headers
+django-cors-middleware
 psycopg2
