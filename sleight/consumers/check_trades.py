@@ -19,20 +19,44 @@ def update_order(order, new_amount):
     order.save()
 
 
-def send_to_ws_group(base, relative, data):
-    Group('ws-{}-{}'.format(base, relative)).send({'text': json.dumps(data)})
+def send_to_ws_group(group_name, data):
+    Group(group_name).send({'text': json.dumps(data)})
 
 
-def update_balance(order):
-    balance, _ = Balance.objects.get_or_create(
-        user=order.user,
+def update_balances(initiating_order, existing_order):
+    # fetch the current balance objects for both users
+    # ask/sell orders get the base currency
+    # bid/buy orders get the variable currency
+    initiating_balance, _ = Balance.objects.get_or_create(
+        user=initiating_order.user,
         currency=(
-            order.pair.base_currency
-            if order.order_type == 'ask' else
-            order.pair.relative_currency
+            initiating_order.pair.base_currency
+            if initiating_order.order_type == 'ask' else
+            initiating_order.pair.relative_currency
         )
     )
-    balance.amount = order.
+    existing_balance, _ = Balance.objects.get_or_create(
+        user=existing_order.user,
+        currency=(
+            existing_order.pair.base_currency
+            if existing_order.order_type == 'ask' else
+            existing_order.pair.relative_currency
+        )
+    )
+
+    # update the balances accordingly
+    # ask/sell order gets the initiating order amount
+    # bid/buy order gets the initiating order amount * the price
+    initiating_balance.amount += (
+        initiating_order.amount
+        if initiating_order.order_type == 'ask' else
+        initiating_order.amount * existing_order.price
+    )
+    existing_balance.amount += (
+        initiating_order.amount
+        if existing_order.order_type == 'ask' else
+        initiating_order.amount
+    )
 
 
 def check_trades(message):
@@ -48,9 +72,11 @@ def check_trades(message):
             initiating_order.id
         )
     )
-    base = initiating_order.pair.base_currency.code.lower()
-    relative = initiating_order.pair.relative_currency.code.lower()
-    send_to_ws_group(base, relative, {
+    group_name = 'ws-{}-{}'.format(
+        initiating_order.pair.base_currency.code.lower(),
+        initiating_order.pair.relative_currency.code.lower()
+    )
+    send_to_ws_group(group_name, {
         'message_type': 'order',
         'order_id': initiating_order.id,
         'amount': str(initiating_order.amount),
@@ -130,18 +156,17 @@ def check_trades(message):
             update_order(initiating_order, 0)
 
         # given that we've traded, we need to update some balances
-        update_balance(initiating_order)
-        update_balance(existing_order)
+        update_balances(initiating_order, existing_order)
 
         # update the orders to the group
-        send_to_ws_group(base, relative, {
+        send_to_ws_group(group_name, {
             'message_type': 'order',
             'order_id': initiating_order.id,
             'state': initiating_order.state,
             'amount': str(initiating_order.amount)
         })
 
-        send_to_ws_group(base, relative, {
+        send_to_ws_group(group_name, {
             'message_type': 'order',
             'order_id': existing_order.id,
             'state': existing_order.state,
@@ -149,7 +174,7 @@ def check_trades(message):
         })
 
         # send the trade too
-        send_to_ws_group(base, relative, {
+        send_to_ws_group(group_name, {
             'message_type': 'trade',
             'trade_time': str(
                 datetime.datetime.strftime(
