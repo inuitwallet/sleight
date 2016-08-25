@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')),
 
     # front end exchange
-    url(r'^$', index),
+    # url(r'^$', index),
     url(r'^exchange/(?P<base_currency>\w+)/(?P<relative_currency>\w+)$', exchange),
 
     # private api
