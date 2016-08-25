@@ -24,6 +24,9 @@ from sleight.views.public_api import GetOrderBook, GetTicker
 urlpatterns = [
     # admin site
     url(r'^admin', admin.site.urls),
+    
+    # user auth
+    url(r'^', include('django.contrib.auth.urls')),
 
     # front end exchange
     url(r'^$', index),
