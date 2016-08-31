@@ -5,5 +5,6 @@ dj-database-url
 django
 django-cors-middleware
 django-jet
+google-api-python-client
 psycopg2
 whitenoise
