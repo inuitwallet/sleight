@@ -182,3 +182,4 @@ JET_DEFAULT_THEME = 'light-gray'
 JET_SIDE_MENU_COMPACT = True
 
 LOGIN_URL = 'index'
+LOGIN_REDIRECT_URL = 'index'
