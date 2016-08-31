@@ -53,20 +53,25 @@ def exchange(request, base_currency, relative_currency):
     ).filter(
         initiating_order__pair=pair,
     )[:150]
-    try:
-        base_balance = Balance.objects.get(
-            user=request.user,
-            currency=pair.base_currency
-        )
-    except Balance.DoesNotExist:
+    # get user balances
+    if request.user.is_authenticated:
+        try:
+            base_balance = Balance.objects.get(
+                user=request.user,
+                currency=pair.base_currency
+            )
+        except Balance.DoesNotExist:
+            base_balance = None
+        try:
+            relative_balance = Balance.objects.get(
+                user=request.user,
+                currency=pair.relative_currency
+            )
+        except Balance.DoesNotExist:
+            relative_balance = None
+    else:
         base_balance = None
-    try:
-        relative_balance = Balance.objects.get(
-            user=request.user,
-            currency=pair.relative_currency
-        )
-    except Balance.DoesNotExist:
-        base_balance = None
+        relative_balance = None            
     context = {
         'pair': pair,
         'bids': bid_orders,
