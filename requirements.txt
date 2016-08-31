@@ -4,5 +4,6 @@ channels
 dj-database-url
 django
 django-cors-middleware
+django-jet
 psycopg2
 whitenoise

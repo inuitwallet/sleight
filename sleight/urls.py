@@ -23,6 +23,7 @@ from sleight.views.public_api import GetOrderBook, GetTicker
 
 urlpatterns = [
     # admin site
+    url(r'^jet/', include('jet.urls', 'jet')), # Django JET URLS
     url(r'^admin', admin.site.urls),
     
     # user auth
