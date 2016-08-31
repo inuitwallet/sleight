@@ -28,7 +28,10 @@ urlpatterns = [
     url(r'^admin', admin.site.urls),
     
     # user auth
-    url(r'^', include('django.contrib.auth.urls')),
+    #url(r'^', include('django.contrib.auth.urls')),
+    url(r'^login/$', 'django.contrib.auth.views.login',
+       {'template_name': 'admin/login.html'}),
+    url(r'^logout/$', 'django.contrib.auth.views.logout'),
 
     # front end exchange
     url(r'^$', index, name='index'),
