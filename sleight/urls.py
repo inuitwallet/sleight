@@ -32,7 +32,7 @@ urlpatterns = [
     #url(r'^', include('django.contrib.auth.urls')),
     url(r'^login/$', auth_views.login,
        {'template_name': 'admin/login.html'}),
-    url(r'^', include('django.contrib.urls')),
+    url(r'^', include('django.contrib.auth.urls')),
 
     # front end exchange
     url(r'^$', index, name='index'),
