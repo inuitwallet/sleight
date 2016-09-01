@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import views as auth_views
 
 from sleight.views.exchange import index, exchange
 from sleight.views.private_api import GetBalances, PlaceOrder, GetOrders, CancelOrder
@@ -29,9 +30,9 @@ urlpatterns = [
     
     # user auth
     #url(r'^', include('django.contrib.auth.urls')),
-    url(r'^login/$', 'django.contrib.auth.views.login',
+    url(r'^login/$', auth_views.login,
        {'template_name': 'admin/login.html'}),
-    url(r'^logout/$', 'django.contrib.auth.views.logout'),
+    url(r'^', include('django.contrib.urls')),
 
     # front end exchange
     url(r'^$', index, name='index'),
