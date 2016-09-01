@@ -37,12 +37,9 @@ class PlaceOrderForm(BaseForm):
         widget=forms.Select(
             attrs={'class': 'form-control'}
         ),
-        choices=get_all_pairs(),
+        choices=[],
         error_messages={
             'invalid_choice': '%(value)s is not a valid currency pair. '
-                              'Choose from {}'.format(
-                                  [pair[0] for pair in get_all_pairs()]
-                              )
         }
     )
     amount = forms.DecimalField(
@@ -59,6 +56,11 @@ class PlaceOrderForm(BaseForm):
         max_digits=20,
         decimal_places=10,
     )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(PlaceOrderForm, self).__init__(*args, **kwargs)
+        self.fields['pair'].choices = get_all_pairs()
 
 
 class GetOrdersForm(BaseForm):
