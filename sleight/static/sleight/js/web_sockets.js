@@ -80,5 +80,12 @@ $(function() {
             $('#trades > tbody > tr:first').before(new_trade_row);
             $('#trade_' + data.trade_id).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
         }
+
+        if (data.message_type == 'balance') {
+            // we should update a balance
+            var balance_span = $('#' + data.balance_type);
+            balance_span.text(parseFloat(data.balance).toFixed(4));
+            balance_span.fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+        }
     };
 });

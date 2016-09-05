@@ -47,12 +47,22 @@ def update_balances(initiating_order, existing_order):
     # update the balances accordingly
     # ask/sell order gets the initiating order amount
     # bid/buy order gets the initiating order amount * the price
+    # update the balance on the front end
     initiating_balance.amount += (
         initiating_order.amount
         if initiating_order.order_type == 'ask' else
         initiating_order.amount * existing_order.price
     )
     initiating_balance.save()
+    send_to_ws_group(initiating_order.user.username, {
+        'message_type': 'balance',
+        'balance_type': (
+            'base_balance'
+            if initiating_order.order_type == 'ask' else
+            'relative_balance'
+        ),
+        'balance': str(initiating_balance.amount)
+    })
 
     existing_balance.amount += (
         initiating_order.amount
@@ -60,8 +70,15 @@ def update_balances(initiating_order, existing_order):
         initiating_order.amount
     )
     existing_balance.save()
-
-
+    send_to_ws_group(existing_order.user.username, {
+        'message_type': 'balance',
+        'balance_type': (
+            'base_balance'
+            if existing_order.order_type == 'ask' else
+            'relative_balance'
+        ),
+        'balance': str(existing_order.amount)
+    })
 
 
 def check_trades(message):

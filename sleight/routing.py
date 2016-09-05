@@ -8,10 +8,11 @@ channel_routing = [
     route('websocket.disconnect', ws_disconnect),
 
     # set a channel per pair to check for trades as orders are added
-    route('btc-usnbt', check_trades),
+    route('check_trades', check_trades),
     route('btc-cnnbt', check_trades),
     route('btc-eunbt', check_trades),
     route('usd-usnbt', check_trades),
     route('cny-cnnbt', check_trades),
+    route('cnnbt-cny', check_trades),
     route('eur-eunbt', check_trades),
 ]

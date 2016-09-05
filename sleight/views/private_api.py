@@ -1,9 +1,14 @@
+import json
+
 from channels import Channel
 from decimal import Decimal
+
+from channels import Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import JsonResponse
 from django.views.generic import View
 
+from sleight.consumers.check_trades import update_balances
 from sleight.forms import GetBalanceForm, PlaceOrderForm, GetOrdersForm, CancelOrderForm, \
     GetTradesForm
 from sleight.models import Balance, CurrencyPair, Order, Trade
@@ -120,8 +125,24 @@ class PlaceOrder(View):
                 )
 
             # user has balance. reduce it by the amount of the order
-            balance.amount -= form.cleaned_data['amount']
+            balance.amount -= order_amount
             balance.save()
+            # update the balance through the channels websocket
+            Group(profile.user.username).send(
+                {
+                    'text': json.dumps(
+                        {
+                            'message_type': 'balance',
+                            'balance_type': (
+                                'relative_balance'
+                                if form.cleaned_data['order_type'] == 'ask' else
+                                'base_balance'
+                            ),
+                            'balance': str(balance.amount)
+                        }
+                    )
+                }
+            )
 
             order = Order.objects.create(
                 user=profile.user,
@@ -134,17 +155,8 @@ class PlaceOrder(View):
             )
             # order is placed.
             # Use channels to check for potential trades
-            order_data = {
-                'order_id': order.id
-            }
-            Channel(
-                '{}-{}'.format(
-                    pair.base_currency.code.lower(),
-                    pair.relative_currency.code.lower(),
-                )
-            ).send(
-                order_data
-            )
+            Channel('check_trades').send({'order_id': order.id})
+
             return JsonResponse(
                 {
                     'success': True,
@@ -245,6 +257,39 @@ class CancelOrder(View):
                 )
             order.state = 'cancelled'
             order.save()
+
+            # return order amount to user
+            balance = Balance.objects.get(
+                user=profile.user,
+                currency=(
+                    order.pair.relative_currency
+                    if order.order_type == 'ask' else
+                    order.pair.base_currency
+                )
+            )
+            balance.amount += (
+                order.amount
+                if order.order_type == 'ask' else
+                (order.amount * order.price)
+            )
+            balance.save()
+            # update the balance through the channels websocket
+            Group(profile.user.username).send(
+                {
+                    'text': json.dumps(
+                        {
+                            'message_type': 'balance',
+                            'balance_type': (
+                                'relative_balance'
+                                if order.order_type == 'ask' else
+                                'base_balance'
+                            ),
+                            'balance': str(balance.amount)
+                        }
+                    )
+                }
+            )
+
             return JsonResponse(
                 {
                     'success': True,
