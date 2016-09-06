@@ -12,12 +12,12 @@
             <h3>Balances</h3>
             {% if base_balance %}
                 <div class="col-md-6">
-                    <h4>Base Balance: <b><strong><span id="base_balance">{{ base_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ base_balance.currency.code }}</b></h4>
+                    <h4>Base: <b><strong><span id="{{ base_balance.currency.code|lower }}_balance">{{ base_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ base_balance.currency.code }}</b></h4>
                 </div>
             {% endif %}
             {% if relative_balance %}
                 <div class="col-md-6">
-                    <h4>Relative Balance: <b><strong><span id="relative_balance">{{ relative_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ relative_balance.currency.code }}</b></h4>
+                    <h4>Relative: <b><strong><span id="{{ relative_balance.currency.code|lower }}_balance">{{ relative_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ relative_balance.currency.code }}</b></h4>
                 </div>
             {% endif %}
         </div>

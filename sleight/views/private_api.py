@@ -132,12 +132,8 @@ class PlaceOrder(View):
                     'text': json.dumps(
                         {
                             'message_type': 'balance',
-                            'balance_type': (
-                                'relative_balance'
-                                if form.cleaned_data['order_type'] == 'ask' else
-                                'base_balance'
-                            ),
-                            'balance': str(balance.amount)
+                            'balance': str(balance.amount),
+                            'currency': balance.currency.code.lower()
                         }
                     )
                 }
@@ -295,12 +291,8 @@ class CancelOrder(View):
                     'text': json.dumps(
                         {
                             'message_type': 'balance',
-                            'balance_type': (
-                                'relative_balance'
-                                if order.order_type == 'ask' else
-                                'base_balance'
-                            ),
-                            'balance': str(balance.amount)
+                            'balance': str(balance.amount),
+                            'currency': balance.currency.code.lower()
                         }
                     )
                 }

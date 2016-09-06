@@ -37,19 +37,12 @@ def update_balance(user, currency, amount, order_type):
     # ask/sell order gets the initiating order amount
     # bid/buy order gets the initiating order amount * the price
     # update the balance on the front end
-    log.info('initiating balance = {}'.format(balance))
-    log.info('adding {}'.format(amount))
     balance.amount += amount
     balance.save()
-    log.info('initiating balance = {}'.format(balance))
     send_to_ws_group(user.username, {
         'message_type': 'balance',
-        'balance_type': (
-            'base_balance'
-            if order_type == 'ask' else
-            'relative_balance'
-        ),
-        'balance': str(balance.amount)
+        'balance': str(balance.amount),
+        'currency': currency.code.lower()
     })
 
 

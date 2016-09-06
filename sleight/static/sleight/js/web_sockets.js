@@ -90,8 +90,7 @@ $(function() {
 
         if (data.message_type == 'balance') {
             // we should update a balance
-            console.log(data);
-            var balance_span = $('#' + data.balance_type);
+            var balance_span = $('#' + data.currency + '_balance');
             balance_span.text(parseFloat(data.balance).toFixed(4));
             balance_span.fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
         }
