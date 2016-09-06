@@ -68,6 +68,7 @@ $(function() {
         if (data.message_type == 'trade') {
             //we have a trade
             //build the new row and put it at the top of the trade table
+            var trade_rows = $('#trades tbody tr');
             var new_trade_row = '<tr id="trade_' + data.trade_id + '">' +
                               '<td>' + data.trade_time + '</td>' +
                               '<td>' + data.trade_type + '</td>' +
@@ -77,12 +78,19 @@ $(function() {
                               '<td>' + data.initiating_id + '</td>' +
                               '<td>' + data.existing_id + '</td>' +
                           '</tr>';
-            $('#trades > tbody > tr:first').before(new_trade_row);
+            if (trade_rows.length == 0) {
+                // trade table is empty.
+                $('#trade tbody').append(new_trade_row);
+            } else {
+                // trade table has rows.
+                $('#trades > tbody > tr:first').before(new_trade_row);
+            }
             $('#trade_' + data.trade_id).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
         }
 
         if (data.message_type == 'balance') {
             // we should update a balance
+            console.log(data);
             var balance_span = $('#' + data.balance_type);
             balance_span.text(parseFloat(data.balance).toFixed(4));
             balance_span.fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
