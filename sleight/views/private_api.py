@@ -108,18 +108,31 @@ class PlaceOrder(View):
                 form.cleaned_data['amount'] * form.cleaned_data['price']
             )
 
-            if balance.amount == Decimal(0) or balance.amount < order_amount:
+            # fail if the order_amount is too low
+            if order_amount < Decimal(0.1):
                 return JsonResponse(
                     {
                         'success': False,
-                        'message': {
-                            'insufficient balance': '{} {}'.format(
-                                float(balance.amount),
-                                pair.relative_currency
-                                if form.cleaned_data['order_type'] == 'ask' else
-                                pair.base_currency
-                            )
-                        }
+                        'message': [
+                            {
+                                'amount': '{} < 0.1'.format(order_amount)
+                            }
+                        ]
+                    }
+                )
+
+            if balance.amount == Decimal(0.0) or balance.amount < order_amount:
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': [
+                            {
+                                'balance': 'insufficient balance {} {}'.format(
+                                    float(balance.amount),
+                                    balance.currency
+                                )
+                            }
+                        ]
                     }
                 )
 
