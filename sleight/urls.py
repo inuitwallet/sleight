@@ -19,7 +19,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import views as auth_views
 
 from sleight.views.exchange import index, exchange
-from sleight.views.private_api import GetBalances, PlaceOrder, GetOrders, CancelOrder
+from sleight.views.private_api import GetBalances, PlaceOrder, GetOrders, CancelOrder, \
+    GetTrades
 from sleight.views.public_api import GetOrderBook, GetTicker
 
 urlpatterns = [
@@ -29,9 +30,10 @@ urlpatterns = [
     url(r'^admin', admin.site.urls),
     
     # user auth
-    #url(r'^', include('django.contrib.auth.urls')),
-    url(r'^login/$', auth_views.login,
-       {'template_name': 'admin/login.html'}),
+    url(
+        r'^login/$', auth_views.login,
+        {'template_name': 'admin/login.html'}
+    ),
     url(r'^', include('django.contrib.auth.urls')),
 
     # front end exchange
@@ -43,6 +45,7 @@ urlpatterns = [
     url(r'^place_order$', csrf_exempt(PlaceOrder.as_view())),
     url(r'^get_orders$', csrf_exempt(GetOrders.as_view())),
     url(r'^cancel_order$', csrf_exempt(CancelOrder.as_view())),
+    url(r'^get_trades$', csrf_exempt(GetTrades.as_view())),
 
     # public api
     url(
