@@ -8,7 +8,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import JsonResponse
 from django.views.generic import View
 
-from sleight.consumers.check_trades import update_balances
 from sleight.forms import GetBalanceForm, PlaceOrderForm, GetOrdersForm, CancelOrderForm, \
     GetTradesForm
 from sleight.models import Balance, CurrencyPair, Order, Trade
