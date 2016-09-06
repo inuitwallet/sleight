@@ -2,6 +2,7 @@ import json
 import logging
 
 import datetime
+
 from channels import Channel
 from channels import Group
 
@@ -23,61 +24,32 @@ def send_to_ws_group(group_name, data):
     Group(group_name).send({'text': json.dumps(data)})
 
 
-def update_balances(initiating_order, existing_order):
+def update_balance(user, currency, amount, order_type):
     # fetch the current balance objects for both users
     # ask/sell orders get the base currency
     # bid/buy orders get the variable currency
-    initiating_balance, _ = Balance.objects.get_or_create(
-        user=initiating_order.user,
-        currency=(
-            initiating_order.pair.base_currency
-            if initiating_order.order_type == 'ask' else
-            initiating_order.pair.relative_currency
-        )
-    )
-    existing_balance, _ = Balance.objects.get_or_create(
-        user=existing_order.user,
-        currency=(
-            existing_order.pair.base_currency
-            if existing_order.order_type == 'ask' else
-            existing_order.pair.relative_currency
-        )
+    balance, _ = Balance.objects.get_or_create(
+        user=user,
+        currency=currency
     )
 
     # update the balances accordingly
     # ask/sell order gets the initiating order amount
     # bid/buy order gets the initiating order amount * the price
     # update the balance on the front end
-    initiating_balance.amount += (
-        initiating_order.amount
-        if initiating_order.order_type == 'ask' else
-        initiating_order.amount * existing_order.price
-    )
-    initiating_balance.save()
-    send_to_ws_group(initiating_order.user.username, {
+    log.info('initiating balance = {}'.format(balance))
+    log.info('adding {}'.format(amount))
+    balance.amount += amount
+    balance.save()
+    log.info('initiating balance = {}'.format(balance))
+    send_to_ws_group(user.username, {
         'message_type': 'balance',
         'balance_type': (
             'base_balance'
-            if initiating_order.order_type == 'ask' else
+            if order_type == 'ask' else
             'relative_balance'
         ),
-        'balance': str(initiating_balance.amount)
-    })
-
-    existing_balance.amount += (
-        initiating_order.amount
-        if existing_order.order_type == 'ask' else
-        initiating_order.amount
-    )
-    existing_balance.save()
-    send_to_ws_group(existing_order.user.username, {
-        'message_type': 'balance',
-        'balance_type': (
-            'base_balance'
-            if existing_order.order_type == 'ask' else
-            'relative_balance'
-        ),
-        'balance': str(existing_order.amount)
+        'balance': str(balance.amount)
     })
 
 
@@ -154,9 +126,38 @@ def check_trades(message):
             # Trade is full trade
             trade.partial = False
             trade.save()
+            # given that we've traded, we need to update some balances and orders
+            update_balance(
+                user=initiating_order.user,
+                currency=(
+                    initiating_order.pair.base_currency
+                    if initiating_order.order_type == 'ask' else
+                    initiating_order.pair.relative_currency
+                ),
+                amount=(
+                    (existing_order.amount * existing_order.price)
+                    if initiating_order.order_type == 'ask' else
+                    existing_order.amount
+                ),
+                order_type=initiating_order.order_type,
+            )
             update_order(
                 initiating_order,
                 (initiating_order.amount - existing_order.amount)
+            )
+            update_balance(
+                user=existing_order.user,
+                currency=(
+                    existing_order.pair.base_currency
+                    if existing_order.order_type == 'ask' else
+                    existing_order.pair.relative_currency
+                ),
+                amount=(
+                    (existing_order.amount * existing_order.price)
+                    if initiating_order.order_type == 'ask' else
+                    existing_order.amount
+                ),
+                order_type=existing_order.order_type,
             )
             update_order(existing_order, 0)
 
@@ -164,21 +165,76 @@ def check_trades(message):
             # Trade is full trade
             trade.partial = False
             trade.save()
+            # given that we've traded, we need to update some balances and orders
+            update_balance(
+                user=initiating_order.user,
+                currency=(
+                    initiating_order.pair.base_currency
+                    if initiating_order.order_type == 'ask' else
+                    initiating_order.pair.relative_currency
+                ),
+                amount=(
+                    (existing_order.amount * existing_order.price)
+                    if initiating_order.order_type == 'ask' else
+                    existing_order.amount
+                ),
+                order_type=initiating_order.order_type,
+            )
             update_order(initiating_order, 0)
+            update_balance(
+                user=existing_order.user,
+                currency=(
+                    existing_order.pair.base_currency
+                    if existing_order.order_type == 'ask' else
+                    existing_order.pair.relative_currency
+                ),
+                amount=(
+                    (existing_order.amount * existing_order.price)
+                    if initiating_order.order_type == 'ask' else
+                    existing_order.amount
+                ),
+                order_type=existing_order.order_type,
+            )
             update_order(existing_order, 0)
 
         if initiating_order.amount < existing_order.amount:
             # Trade is partial trade
             trade.partial = True
             trade.save()
+            # given that we've traded, we need to update some balances and orders
+            update_balance(
+                user=existing_order.user,
+                currency=(
+                    existing_order.pair.base_currency
+                    if existing_order.order_type == 'ask' else
+                    existing_order.pair.relative_currency
+                ),
+                amount=(
+                    (initiating_order.amount * existing_order.price)
+                    if existing_order.order_type == 'ask' else
+                    initiating_order.amount
+                ),
+                order_type=existing_order.order_type,
+            )
             update_order(
                 existing_order,
                 (existing_order.amount - initiating_order.amount)
             )
+            update_balance(
+                user=initiating_order.user,
+                currency=(
+                    initiating_order.pair.base_currency
+                    if initiating_order.order_type == 'ask' else
+                    initiating_order.pair.relative_currency
+                ),
+                amount=(
+                    (initiating_order.amount * existing_order.price)
+                    if existing_order.order_type == 'ask' else
+                    initiating_order.amount
+                ),
+                order_type=initiating_order.order_type,
+            )
             update_order(initiating_order, 0)
-
-        # given that we've traded, we need to update some balances
-        update_balances(initiating_order, existing_order)
 
         # update the orders to the group
         send_to_ws_group(group_name, {
