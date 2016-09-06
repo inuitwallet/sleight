@@ -256,6 +256,23 @@ class CancelOrder(View):
                 )
             order.state = 'cancelled'
             order.save()
+            # remove the order from the front end
+            Group(
+                'ws-{}-{}'.format(
+                    order.pair.base_currency.code.lower(),
+                    order.pair.relative_currency.code.lower()
+                )
+            ).send(
+                {
+                    'text': json.dumps(
+                        {
+                            'message_type': 'order',
+                            'order_id': order.id,
+                            'state': order.state,
+                        }
+                    )
+                }
+            )
 
             # return order amount to user
             balance = Balance.objects.get(
