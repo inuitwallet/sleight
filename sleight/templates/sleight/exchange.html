@@ -8,22 +8,22 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-xs-10 col-xs-offset-1 col-md-10 col-md-offset-1">
             <h3>Balances</h3>
             {% if base_balance %}
-                <div class="col-md-6">
+                <div class="col-xs-6 col-md-6">
                     <h4>Base Balance: <b><strong><span id="base_balance">{{ base_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ base_balance.currency }}</b></h4>
                 </div>
             {% endif %}
             {% if relative_balance %}
-                <div class="col-md-6">
+                <div class="col-xs-6 col-md-6">
                     <h4>Relative Balance: <b><strong><span id="relative_balance">{{ relative_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ relative_balance.currency }}</b></h4>
                 </div>
             {% endif %}
         </div>
     </div>
     <div class="row">
-        <div class="col-md-5 col-md-offset-1">
+        <div class="col-xs-10 col-xs-offset-1 col-md-5 col-md-offset-1">
             <h3>Bids</h3>
             <div id="bids-table">
                 <table id="bid_orders" class="table table-condensed table-hover table-bordered table-striped">
@@ -33,13 +33,13 @@
                             ID
                         </td>
                         <td>
-                            Price in {{ pair.base_currency }}
+                            Price ({{ pair.base_currency.code }})
                         </td>
                         <td>
-                            Amount in {{ pair.relative_currency }}
+                            Amount ({{ pair.relative_currency.code }})
                         </td>
                         <td>
-                            Total in {{ pair.base_currency }}
+                            Total ({{ pair.base_currency.code }})
                         </td>
                     </tr>
                 </thead>
@@ -56,7 +56,7 @@
             </table>
             </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-xs-10 col-xs-offset-1 col-md-5">
             <h3>Asks</h3>
             <div id="asks-table">
                 <table id="ask_orders" class="table table-condensed table-hover table-bordered table-striped">
@@ -66,13 +66,13 @@
                             ID
                         </td>
                         <td>
-                            Price in {{ pair.base_currency }}
+                            Price ({{ pair.base_currency.code }})
                         </td>
                         <td>
-                            Amount in {{ pair.relative_currency }}
+                            Amount ({{ pair.relative_currency.code }})
                         </td>
                         <td>
-                            Total in {{ pair.base_currency }}
+                            Total ({{ pair.base_currency.code }})
                         </td>
                     </tr>
                 </thead>
@@ -91,7 +91,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-xs-10 col-xs-offset-1 col-md-10 col-md-offset-1">
             <h3>Trades</h3>
             <div id="trades-table">
                 <table id="trades" class="table table-condensed table-hover table-bordered table-striped">
@@ -104,13 +104,13 @@
                             Type
                         </td>
                         <td>
-                            Price in {{ pair.base_currency }}
+                            Price ({{ pair.base_currency.code }})
                         </td>
                         <td>
-                            Amount in {{ pair.relative_currency }}
+                            Amount ({{ pair.relative_currency.code }})
                         </td>
                         <td>
-                            Total in {{ pair.base_currency }}
+                            Total ({{ pair.base_currency.code }})
                         </td>
                         <td>
                             Initiating ID
