@@ -147,7 +147,7 @@ class PlaceOrder(View):
                     'text': json.dumps(
                         {
                             'message_type': 'balance',
-                            'balance': str(balance.amount) < ,
+                            'balance': str(balance.amount),
                             'currency': balance.currency.code.lower()
                         }
                     )
