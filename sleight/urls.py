@@ -16,25 +16,21 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import views as auth_views
 
-from sleight.views.exchange import index, exchange
+from sleight.views.exchange import index, exchange, register
 from sleight.views.private_api import GetBalances, PlaceOrder, GetOrders, CancelOrder, \
     GetTrades
 from sleight.views.public_api import GetOrderBook, GetTicker
 
 urlpatterns = [
     # admin site
-    url(r'^jet/', include('jet.urls', 'jet')), # Django JET URLS
-    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     url(r'^admin', admin.site.urls),
     
     # user auth
-    url(
-        r'^login/$', auth_views.login,
-        {'template_name': 'admin/login.html'}
-    ),
     url(r'^', include('django.contrib.auth.urls')),
+    url(r'^register/', register, name='register'),
 
     # front end exchange
     url(r'^$', index, name='index'),

@@ -9,16 +9,20 @@
 {% block content %}
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <h3>Balances</h3>
-            {% if base_balance %}
-                <div class="col-md-6">
-                    <h4>Base: <b><strong><span id="{{ base_balance.currency.code|lower }}_balance">{{ base_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ base_balance.currency.code }}</b></h4>
-                </div>
-            {% endif %}
-            {% if relative_balance %}
-                <div class="col-md-6">
-                    <h4>Relative: <b><strong><span id="{{ relative_balance.currency.code|lower }}_balance">{{ relative_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ relative_balance.currency.code }}</b></h4>
-                </div>
+            {% if user.is_authenticated %}
+                <h3>Balances for {{ user.username }}</h3>
+                {% if base_balance %}
+                    <div class="col-md-6">
+                        <h4>Base: <b><strong><span id="{{ base_balance.currency.code|lower }}_balance">{{ base_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ base_balance.currency.code }}</b></h4>
+                    </div>
+                {% endif %}
+                {% if relative_balance %}
+                    <div class="col-md-6">
+                        <h4>Relative: <b><strong><span id="{{ relative_balance.currency.code|lower }}_balance">{{ relative_balance.amount|stringformat:"f"|trim_zeros }}</span></strong> {{ relative_balance.currency.code }}</b></h4>
+                    </div>
+                {% endif %}
+            {% else %}
+                <h3><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a> to view balances</h3>
             {% endif %}
         </div>
     </div>

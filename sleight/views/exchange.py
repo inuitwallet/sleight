@@ -75,5 +75,10 @@ def exchange(request, base_currency, relative_currency):
         'trades': trades,
         'base_balance': base_balance,
         'relative_balance': relative_balance,
+        'user': request.user,
     }
     return render(request, 'sleight/exchange.html', context)
+
+
+def register(request):
+    return JsonResponse({'yup': True})

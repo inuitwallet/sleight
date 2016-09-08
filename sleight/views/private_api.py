@@ -109,13 +109,13 @@ class PlaceOrder(View):
             )
 
             # fail if the order_amount is too low
-            if order_amount < Decimal(0.1):
+            if order_amount == Decimal(0.0):
                 return JsonResponse(
                     {
                         'success': False,
                         'message': [
                             {
-                                'amount': '{} < 0.1'.format(order_amount)
+                                'amount': 'must be a non zero positive number',
                             }
                         ]
                     }
@@ -127,9 +127,11 @@ class PlaceOrder(View):
                         'success': False,
                         'message': [
                             {
-                                'balance': 'insufficient balance {} {}'.format(
+                                'balance': 'insufficient balance {} {} < {} {}'.format(
                                     float(balance.amount),
-                                    balance.currency
+                                    balance.currency,
+                                    float(order_amount),
+                                    balance.currency,
                                 )
                             }
                         ]
@@ -145,7 +147,7 @@ class PlaceOrder(View):
                     'text': json.dumps(
                         {
                             'message_type': 'balance',
-                            'balance': str(balance.amount),
+                            'balance': str(balance.amount) < ,
                             'currency': balance.currency.code.lower()
                         }
                     )
