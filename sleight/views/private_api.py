@@ -116,7 +116,7 @@ class PlaceOrder(View):
                         'message': [
                             {
                                 'amount': 'received {}. amount must be a non zero '
-                                          'positive number'.format(order_amount),
+                                          'positive number'.format(float(order_amount)),
                             }
                         ]
                     }
