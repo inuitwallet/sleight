@@ -128,11 +128,11 @@ class PlaceOrder(View):
                         'success': False,
                         'message': [
                             {
-                                'balance': 'insufficient balance {} {} < {} {}'.format(
+                                'balance': 'insufficient balance: {} {} < {} {}'.format(
                                     float(balance.amount),
-                                    balance.currency,
+                                    balance.currency.code,
                                     float(order_amount),
-                                    balance.currency,
+                                    balance.currency.code,
                                 )
                             }
                         ]
