@@ -122,6 +122,23 @@ class PlaceOrder(View):
                     }
                 )
 
+            # fail is the price is 0
+            if form.cleaned_data['price'] == Decimal(0.0):
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': [
+                            {
+                                'price': 'received {}. price must be a non zero '
+                                         'positive number'.format(
+                                            float(form.cleaned_data['price'])
+                                         )
+                            }
+                        ]
+                    }
+                )
+
+            # check available balance
             if balance.amount == Decimal(0.0) or balance.amount < order_amount:
                 return JsonResponse(
                     {
