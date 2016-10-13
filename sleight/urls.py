@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
-from sleight.views.exchange import index, exchange, register
+from sleight.views.exchange import index, exchange, register, graph
 from sleight.views.private_api import GetBalances, PlaceOrder, GetOrders, CancelOrder, \
     GetTrades
 from sleight.views.public_api import GetOrderBook, GetTicker
@@ -34,6 +34,7 @@ urlpatterns = [
 
     # front end exchange
     url(r'^$', index, name='index'),
+    url(r'^graph$', graph),
     url(r'^exchange/(?P<base_currency>\w+)/(?P<relative_currency>\w+)$', exchange),
 
     # private api

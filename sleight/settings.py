@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sleight.apps.SleightConfig',
     'channels',
-    'corsheaders'
+    'corsheaders',
+    'graphos',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +138,10 @@ STATICFILES_DIRS = [
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+STATICFILES_FINDERS = [
+    'djangobower.finders.BowerFinder',
+]
+
 APPEND_SLASH = False
 
 CHANNEL_LAYERS = {
@@ -183,3 +188,15 @@ JET_SIDE_MENU_COMPACT = True
 
 LOGIN_URL = 'index'
 LOGIN_REDIRECT_URL = 'index'
+
+# Django Bower
+# Specify path to components root (you need to use absolute path)
+APPLICATION_DIR = os.path.dirname(globals()['__file__'])
+BOWER_COMPONENTS_ROOT = os.path.join(APPLICATION_DIR, 'components')
+
+BOWER_PATH = '/usr/bin/bower'
+
+BOWER_INSTALLED_APPS = (
+    'd3#3.5.5',
+    'nvd3#1.7.1',
+)

@@ -3,7 +3,9 @@ bpython
 channels
 dj-database-url
 django
+django-bower
 django-cors-middleware
+django-graphos
 django-jet
 google-api-python-client
 psycopg2

@@ -2,6 +2,8 @@ from decimal import Decimal
 
 from django.http.response import JsonResponse
 from django.shortcuts import render, get_object_or_404
+from graphos.renderers.gchart import LineChart
+from graphos.sources.model import ModelDataSource
 
 from sleight.models import CurrencyPair, Order, Trade, Balance
 
@@ -82,3 +84,33 @@ def exchange(request, base_currency, relative_currency):
 
 def register(request):
     return JsonResponse({'yup': True})
+
+
+def graph(request):
+    orders = Order.objects.exclude(
+        state='cancelled'
+    ).exclude(
+        state='complete'
+    ).order_by(
+        'price'
+    )
+
+    prices = sorted(list(set(list(
+        float(order.price) for order in orders
+    ))))
+
+    order_totals = []
+    for price in prices:
+        this_total = {'ask': 0, 'bid': 0, 'price': price}
+        for order in orders:
+            if order.price == price:
+                this_total[order.order_type] += order.amount
+        order_totals.append(this_total)
+
+    context = {
+        'orders': list(
+            [float(total['price']), float(total['ask']), float(total['bid'])]
+            for total in order_totals
+        )
+    }
+    return render(request, 'chart.html', context)
