@@ -43,10 +43,12 @@ class CurrencyPair(models.Model):
     base_currency = models.ForeignKey(
         Currency,
         related_name='base_currency',
+        on_delete=models.CASCADE
     )
     relative_currency = models.ForeignKey(
         Currency,
         related_name='relative_currency',
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -58,11 +60,13 @@ class CurrencyPair(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(
-        User
+        User,
+        on_delete=models.CASCADE
     )
     pair = models.ForeignKey(
         CurrencyPair,
-        related_name='order'
+        related_name='order',
+        on_delete=models.CASCADE
     )
     original_amount = models.DecimalField(
         max_digits=20,
@@ -100,11 +104,13 @@ class Order(models.Model):
 class Trade(models.Model):
     initiating_order = models.ForeignKey(
         Order,
-        related_name='initiating_order'
+        related_name='initiating_order',
+        on_delete=models.CASCADE
     )
     existing_order = models.ForeignKey(
         Order,
-        related_name='existing_order'
+        related_name='existing_order',
+        on_delete=models.CASCADE
     )
     time = models.DateTimeField(
         auto_now_add=True,
@@ -121,10 +127,12 @@ class Trade(models.Model):
 
 class Balance(models.Model):
     user = models.ForeignKey(
-        User
+        User,
+        on_delete=models.CASCADE
     )
     currency = models.ForeignKey(
-        Currency
+        Currency,
+        on_delete=models.CASCADE
     )
     amount = models.DecimalField(
         max_digits=20,

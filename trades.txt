@@ -1,0 +1,36 @@
+USD/NBT
+
+Sell NBT for USD
+Sell 5 NBT at 1 USD each = Pay 5 USD Get 5 NBT
+
+Buy NBT with USD
+Buy 5 NBT at 1 USD each = 5 USD
+
+
+Bid
+    Buy Relative Currency with Base Currency
+    Pay with Base Currency
+    Receive Relative Currency
+    
+    Place order
+        I would like to buy 5 rel. for each I am willing to pay 1.2 base
+        Bid order of 5 rel @ 1.2 base =  6 base
+        pay 6 base (taken when order is placed)
+    Order complete
+        receive 5 rel
+    Cancel order
+        order removed. reimburse 6 base
+    
+Ask
+    Sell Relative Currency for Base Currency
+    Pay with Relative Currency
+    Receive Base Currency 
+    
+    Place Order
+        I would like to sell 5 rel. for each I would like 1.2 base
+        Ask order of 5 rel @ 1.2 base = 6 base 
+        Pay 5 rel (taken when order is placed
+    Order complete
+        receive 6 base
+    Cancel order
+        order removed reimburse 5 rel   

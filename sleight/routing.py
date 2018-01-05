@@ -1,6 +1,6 @@
 from channels import route
-from consumers.check_trades import check_trades
-from consumers.websockets import ws_connect, ws_disconnect
+from sleight.consumers.check_trades import check_trades
+from sleight.consumers.websockets import ws_connect, ws_disconnect
 
 channel_routing = [
     # set up web sockets for updating the front end

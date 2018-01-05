@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Chart Town
+{% endblock%}
+
+{% block content %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        var orders = "{% for order in orders %}{{ order }},{% endfor %}";
+
+        console.log(orders);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Price', 'Asks', 'Bids'],
+                orders
+        ]);
+
+        var options = {
+            title: 'Order Depth',
+            hAxis: {title: 'Price',  titleTextStyle: {color: '#333'}},
+            vAxis: {minValue: 0}
+        };
+
+        console.log(data);
+
+        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+{% endblock %}}
