@@ -1,3 +1,4 @@
+import codecs
 import hashlib
 import hmac
 
@@ -44,8 +45,8 @@ def ensure_valid(data):
 
     # ensure the secret hash of the nonce is correct
     calculated_hash = hmac.new(
-        str(profile.api_secret),
-        str(data['nonce']),
+        '{}'.format(profile.api_secret).encode('utf-8'),
+        '{}'.format(data['nonce']).encode('utf-8'),
         hashlib.sha256
     ).hexdigest()
     if calculated_hash != data['nonce_hash']:

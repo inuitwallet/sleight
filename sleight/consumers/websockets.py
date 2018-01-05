@@ -13,7 +13,7 @@ def ws_connect(message):
     # Get the prefix and requested currencies from the path
     try:
         prefix, base_currency, relative_currency = (
-            message['path'].decode('ascii').strip('/').split('/')
+            message['path'].strip('/').split('/')
         )
         # error if the socket hasn't requested an exchange
         if prefix != 'exchange':
@@ -58,7 +58,7 @@ def ws_connect(message):
             user.username,
             channel_layer=message.channel_layer
         ).add(message.reply_channel)
-
+    message.reply_channel.send({'accept': True}, immediately=True)
 
 
 def ws_disconnect(message):
@@ -74,3 +74,10 @@ def ws_disconnect(message):
                 pair.relative_currency.code.lower()
             )
         ).discard(message.reply_channel)
+
+    message.reply_channel.send(
+        {
+            'close': True
+        },
+        immediately=True
+    )
