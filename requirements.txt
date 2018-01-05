@@ -17,6 +17,7 @@ django-bower==5.2.0
 django-cors-middleware==1.3.1
 django-graphos==0.3.41
 django-jet==1.0.6
+django-storages
 google-api-python-client==1.6.4
 greenlet==0.4.12
 httplib2==0.10.3
@@ -39,5 +40,4 @@ txaio==2.8.2
 uritemplate==3.0.0
 urllib3==1.22
 wcwidth==0.1.7
-whitenoise==3.3.1
 zope.interface==4.4.3

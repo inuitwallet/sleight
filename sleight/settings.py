@@ -16,6 +16,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+env = os.environ
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'channels',
     'corsheaders',
     'graphos',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -136,11 +139,19 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 STATICFILES_FINDERS = [
     'djangobower.finders.BowerFinder',
 ]
+
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = env.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env.get('AWS_STORAGE_BUCKET_NAME')
+AWS_IS_GZIPPED = True
+AWS_S3_REGION_NAME = env.get('AWS_S3_REGION_NAME')
 
 APPEND_SLASH = False
 
