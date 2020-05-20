@@ -21,7 +21,7 @@ django-jet==1.0.6
 django-storages
 google-api-python-client==1.6.4
 greenlet==0.4.12
-httplib2==0.10.3
+httplib2==0.18.0
 hyperlink==17.3.1
 idna==2.6
 incremental==17.5.0
