@@ -36,7 +36,7 @@ redis==2.10.6
 requests==2.18.4
 rsa==3.4.2
 six==1.11.0
-Twisted==17.9.0
+Twisted==21.2.0
 txaio==2.8.2
 uritemplate==3.0.0
 urllib3==1.22
