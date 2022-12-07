@@ -6,7 +6,7 @@ Automat==0.6.0
 blessings==1.6.1
 boto3
 bpython==0.16
-certifi==2017.11.5
+certifi==2022.12.7
 channels==1.1.8
 chardet==3.0.4
 constantly==15.1.0
